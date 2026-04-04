@@ -7,10 +7,20 @@ import {
   Conversation,
   ConversationContent,
   ConversationEmptyState,
+  ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
 import { MessageSquareIcon } from "lucide-react";
-import { Message, MessageContent } from "@/components/ai-elements/message";
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "@/components/ai-elements/message";
 import { PromptInputBasic } from "@/components/app/prompt-input-basic";
+import {
+  Reasoning,
+  ReasoningContent,
+  ReasoningTrigger,
+} from "@/components/ai-elements/reasoning";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
@@ -37,13 +47,27 @@ export function Chat() {
               title="Hi, I'm Miru"
             />
           ) : (
-            messages.map((message) => (
-              <Message from={message.role} key={message.id}>
-                <MessageContent>{message.content}</MessageContent>
-              </Message>
+            messages.map((message, index) => (
+              <div key={message.id}>
+                {message.reasoning && (
+                  <Reasoning
+                    className="w-full"
+                    isStreaming={isLoading && index === messages.length - 1}
+                  >
+                    <ReasoningTrigger />
+                    <ReasoningContent>{message.reasoning}</ReasoningContent>
+                  </Reasoning>
+                )}
+                <Message from={message.role}>
+                  <MessageContent>
+                    <MessageResponse>{message.content}</MessageResponse>
+                  </MessageContent>
+                </Message>
+              </div>
             ))
           )}
         </ConversationContent>
+        <ConversationScrollButton />
       </Conversation>
 
       {/* Input */}
