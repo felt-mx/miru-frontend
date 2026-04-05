@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 import {
   PromptInputActionMenuContent,
   PromptInputTextarea,
@@ -13,6 +13,8 @@ import {
   PromptInput,
   PromptInputFooter,
   PromptInputSubmit,
+  PromptInputActionAddAttachments,
+  usePromptInputAttachments,
 } from "@/components/ai-elements/prompt-input";
 import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
@@ -22,6 +24,58 @@ import {
   ModelSettings,
   useModelSettings,
 } from "@/components/app/model-settings-dialog";
+import {
+  Attachment,
+  AttachmentData,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from "../ai-elements/attachments";
+
+interface AttachmentItemProps {
+  attachment: AttachmentData;
+  onRemove: (id: string) => void;
+}
+
+const AttachmentItem = memo(({ attachment, onRemove }: AttachmentItemProps) => {
+  const handleRemove = useCallback(
+    () => onRemove(attachment.id),
+    [onRemove, attachment.id],
+  );
+  return (
+    <Attachment data={attachment} key={attachment.id} onRemove={handleRemove}>
+      <AttachmentPreview />
+      <AttachmentRemove />
+    </Attachment>
+  );
+});
+
+AttachmentItem.displayName = "AttachmentItem";
+
+const PromptInputAttachmentsDisplay = () => {
+  const attachments = usePromptInputAttachments();
+
+  const handleRemove = useCallback(
+    (id: string) => attachments.remove(id),
+    [attachments],
+  );
+
+  if (attachments.files.length === 0) {
+    return null;
+  }
+
+  return (
+    <Attachments variant="inline">
+      {attachments.files.map((attachment) => (
+        <AttachmentItem
+          attachment={attachment}
+          key={attachment.id}
+          onRemove={handleRemove}
+        />
+      ))}
+    </Attachments>
+  );
+};
 
 export function PromptInputBasic({
   handleSubmit,
@@ -50,6 +104,7 @@ export function PromptInputBasic({
     <>
       <PromptInputProvider>
         <PromptInput onSubmit={onSubmit}>
+          <PromptInputAttachmentsDisplay />
           <PromptInputBody>
             <PromptInputTextarea
               className="p-4"
@@ -62,6 +117,7 @@ export function PromptInputBasic({
               <PromptInputActionMenu>
                 <PromptInputActionMenuTrigger disabled={isLoading} />
                 <PromptInputActionMenuContent>
+                  <PromptInputActionAddAttachments />
                   <DropdownMenuItem
                     onClick={() => {
                       setOpen(true);
