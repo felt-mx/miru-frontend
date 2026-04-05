@@ -58,15 +58,11 @@ export function useModelSettings(thinking: boolean) {
 }
 
 type ModelSettingsDialogProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   settings: ModelSettings;
   setSettings: React.Dispatch<React.SetStateAction<ModelSettings>>;
 };
 
 export function ModelSettingsDialog({
-  open,
-  onOpenChange,
   settings,
   setSettings,
 }: ModelSettingsDialogProps) {
@@ -79,221 +75,219 @@ export function ModelSettingsDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Model Settings</DialogTitle>
-          <DialogDescription>
-            Configure your model settings here.
-          </DialogDescription>
-        </DialogHeader>
-        <TooltipProvider>
-          <div className="py-4">
-            <div className="mx-auto grid w-full max-w-xs gap-3 py-2">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5">
-                  <Label htmlFor="slider-temperature">Temperature</Label>
-                  <Tooltip>
-                    <TooltipTrigger
-                      type="button"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      <CircleHelp className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-xs text-left text-xs">
-                        Controls randomness. Lower values produce more focused,
-                        predictable outputs. Higher values create more creative
-                        but potentially less coherent results.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  {settings.temperature.join(", ")}
-                </span>
+    <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogHeader>
+        <DialogTitle>Model Settings</DialogTitle>
+        <DialogDescription>
+          Configure your model settings here.
+        </DialogDescription>
+      </DialogHeader>
+      <TooltipProvider>
+        <div className="py-4">
+          <div className="mx-auto grid w-full max-w-xs gap-3 py-2">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5">
+                <Label htmlFor="slider-temperature">Temperature</Label>
+                <Tooltip>
+                  <TooltipTrigger
+                    type="button"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <CircleHelp className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs text-left text-xs">
+                      Controls randomness. Lower values produce more focused,
+                      predictable outputs. Higher values create more creative
+                      but potentially less coherent results.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
-              <Slider
-                id="slider-temperature"
-                value={settings.temperature}
-                onValueChange={(val) => updateSetting("temperature", val)}
-                min={0}
-                max={1}
-                step={0.1}
-              />
+              <span className="text-sm text-muted-foreground">
+                {settings.temperature.join(", ")}
+              </span>
             </div>
-            <div className="mx-auto grid w-full max-w-xs gap-3 py-2">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5">
-                  <Label htmlFor="slider-top-p">Top-P</Label>
-                  <Tooltip>
-                    <TooltipTrigger
-                      type="button"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      <CircleHelp className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-xs text-left text-xs">
-                        Limits token selection to the smallest set of
-                        probabilities that sum up to a chosen percentage. A
-                        higher value allows more unpredictable sampling; lower
-                        restricts choices for consistency.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  {settings.topP.join(", ")}
-                </span>
-              </div>
-              <Slider
-                id="slider-top-p"
-                value={settings.topP}
-                onValueChange={(val) => updateSetting("topP", val)}
-                min={0}
-                max={1}
-                step={0.1}
-              />
-            </div>
-            <div className="mx-auto grid w-full max-w-xs gap-3 py-2">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5">
-                  <Label htmlFor="slider-top-k">Top-K</Label>
-                  <Tooltip>
-                    <TooltipTrigger
-                      type="button"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      <CircleHelp className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-xs text-left text-xs">
-                        Selects only the k most probable tokens from the
-                        vocabulary. Useful when you want to constrain generation
-                        to a specific subset of words.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  {settings.topK.join(", ")}
-                </span>
-              </div>
-              <Slider
-                id="slider-top-k"
-                value={settings.topK}
-                onValueChange={(val) => updateSetting("topK", val)}
-                min={0}
-                max={100}
-                step={1}
-              />
-            </div>
-            <div className="mx-auto grid w-full max-w-xs gap-3 py-2">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5">
-                  <Label htmlFor="slider-min-p">Min-P</Label>
-                  <Tooltip>
-                    <TooltipTrigger
-                      type="button"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      <CircleHelp className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-xs text-left text-xs">
-                        Ensures tokens are selected only if they meet or exceed
-                        a minimum probability threshold, helping maintain
-                        diversity without going too unpredictable.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  {settings.minP.join(", ")}
-                </span>
-              </div>
-              <Slider
-                id="slider-min-p"
-                value={settings.minP}
-                onValueChange={(val) => updateSetting("minP", val)}
-                min={0}
-                max={1}
-                step={0.1}
-              />
-            </div>
-            <div className="mx-auto grid w-full max-w-xs gap-3 py-2">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5">
-                  <Label htmlFor="slider-presence-penalty">
-                    Presence Penalty
-                  </Label>
-                  <Tooltip>
-                    <TooltipTrigger
-                      type="button"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      <CircleHelp className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-xs text-left text-xs">
-                        Rewards introducing new words and discourages repeating
-                        the same one. Higher values push the model to try
-                        different topics.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  {settings.presencePenalty.join(", ")}
-                </span>
-              </div>
-              <Slider
-                id="slider-presence-penalty"
-                value={settings.presencePenalty}
-                onValueChange={(val) => updateSetting("presencePenalty", val)}
-                min={0}
-                max={2}
-                step={0.1}
-              />
-            </div>
-            <div className="mx-auto grid w-full max-w-xs gap-3 py-2">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5">
-                  <Label htmlFor="slider-repetition-penalty">
-                    Repetition Penalty
-                  </Label>
-                  <Tooltip>
-                    <TooltipTrigger
-                      type="button"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      <CircleHelp className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-xs text-left text-xs">
-                        Penalizes generating already-mentioned tokens, reducing
-                        repetitive patterns in long conversations or articles.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  {settings.repetitionPenalty.join(", ")}
-                </span>
-              </div>
-              <Slider
-                id="slider-repetition-penalty"
-                value={settings.repetitionPenalty}
-                onValueChange={(val) => updateSetting("repetitionPenalty", val)}
-                min={0}
-                max={2}
-                step={0.1}
-              />
-            </div>
+            <Slider
+              id="slider-temperature"
+              value={settings.temperature}
+              onValueChange={(val) => updateSetting("temperature", val)}
+              min={0}
+              max={1}
+              step={0.1}
+            />
           </div>
-        </TooltipProvider>
-      </DialogContent>
-    </Dialog>
+          <div className="mx-auto grid w-full max-w-xs gap-3 py-2">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5">
+                <Label htmlFor="slider-top-p">Top-P</Label>
+                <Tooltip>
+                  <TooltipTrigger
+                    type="button"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <CircleHelp className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs text-left text-xs">
+                      Limits token selection to the smallest set of
+                      probabilities that sum up to a chosen percentage. A higher
+                      value allows more unpredictable sampling; lower restricts
+                      choices for consistency.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+              <span className="text-sm text-muted-foreground">
+                {settings.topP.join(", ")}
+              </span>
+            </div>
+            <Slider
+              id="slider-top-p"
+              value={settings.topP}
+              onValueChange={(val) => updateSetting("topP", val)}
+              min={0}
+              max={1}
+              step={0.1}
+            />
+          </div>
+          <div className="mx-auto grid w-full max-w-xs gap-3 py-2">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5">
+                <Label htmlFor="slider-top-k">Top-K</Label>
+                <Tooltip>
+                  <TooltipTrigger
+                    type="button"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <CircleHelp className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs text-left text-xs">
+                      Selects only the k most probable tokens from the
+                      vocabulary. Useful when you want to constrain generation
+                      to a specific subset of words.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+              <span className="text-sm text-muted-foreground">
+                {settings.topK.join(", ")}
+              </span>
+            </div>
+            <Slider
+              id="slider-top-k"
+              value={settings.topK}
+              onValueChange={(val) => updateSetting("topK", val)}
+              min={0}
+              max={100}
+              step={1}
+            />
+          </div>
+          <div className="mx-auto grid w-full max-w-xs gap-3 py-2">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5">
+                <Label htmlFor="slider-min-p">Min-P</Label>
+                <Tooltip>
+                  <TooltipTrigger
+                    type="button"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <CircleHelp className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs text-left text-xs">
+                      Ensures tokens are selected only if they meet or exceed a
+                      minimum probability threshold, helping maintain diversity
+                      without going too unpredictable.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+              <span className="text-sm text-muted-foreground">
+                {settings.minP.join(", ")}
+              </span>
+            </div>
+            <Slider
+              id="slider-min-p"
+              value={settings.minP}
+              onValueChange={(val) => updateSetting("minP", val)}
+              min={0}
+              max={1}
+              step={0.1}
+            />
+          </div>
+          <div className="mx-auto grid w-full max-w-xs gap-3 py-2">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5">
+                <Label htmlFor="slider-presence-penalty">
+                  Presence Penalty
+                </Label>
+                <Tooltip>
+                  <TooltipTrigger
+                    type="button"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <CircleHelp className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs text-left text-xs">
+                      Rewards introducing new words and discourages repeating
+                      the same one. Higher values push the model to try
+                      different topics.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+              <span className="text-sm text-muted-foreground">
+                {settings.presencePenalty.join(", ")}
+              </span>
+            </div>
+            <Slider
+              id="slider-presence-penalty"
+              value={settings.presencePenalty}
+              onValueChange={(val) => updateSetting("presencePenalty", val)}
+              min={0}
+              max={2}
+              step={0.1}
+            />
+          </div>
+          <div className="mx-auto grid w-full max-w-xs gap-3 py-2">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5">
+                <Label htmlFor="slider-repetition-penalty">
+                  Repetition Penalty
+                </Label>
+                <Tooltip>
+                  <TooltipTrigger
+                    type="button"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <CircleHelp className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs text-left text-xs">
+                      Penalizes generating already-mentioned tokens, reducing
+                      repetitive patterns in long conversations or articles.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+              <span className="text-sm text-muted-foreground">
+                {settings.repetitionPenalty.join(", ")}
+              </span>
+            </div>
+            <Slider
+              id="slider-repetition-penalty"
+              value={settings.repetitionPenalty}
+              onValueChange={(val) => updateSetting("repetitionPenalty", val)}
+              min={0}
+              max={2}
+              step={0.1}
+            />
+          </div>
+        </div>
+      </TooltipProvider>
+    </DialogContent>
   );
 }

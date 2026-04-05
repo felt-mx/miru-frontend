@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback } from "react";
 import {
   PromptInputActionMenuContent,
   PromptInputTextarea,
@@ -31,6 +31,7 @@ import {
   AttachmentRemove,
   Attachments,
 } from "../ai-elements/attachments";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
 interface AttachmentItemProps {
   attachment: AttachmentData;
@@ -91,7 +92,6 @@ export function PromptInputBasic({
   thinking: boolean;
   setThinking: (thinking: boolean) => void;
 }) {
-  const [open, setOpen] = useState(false);
   const { settings, setSettings } = useModelSettings(thinking);
 
   const onSubmit = ({ text }: PromptInputMessage) => {
@@ -118,13 +118,17 @@ export function PromptInputBasic({
                 <PromptInputActionMenuTrigger disabled={isLoading} />
                 <PromptInputActionMenuContent>
                   <PromptInputActionAddAttachments />
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setOpen(true);
-                    }}
-                  >
-                    <Wrench className="mr-2 size-4" /> Model Setting
-                  </DropdownMenuItem>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                        <Wrench className="mr-2 size-4" /> Model Setting
+                      </DropdownMenuItem>
+                    </DialogTrigger>
+                    <ModelSettingsDialog
+                      settings={settings}
+                      setSettings={setSettings}
+                    />
+                  </Dialog>
                 </PromptInputActionMenuContent>
               </PromptInputActionMenu>
               <PromptInputButton variant="ghost">
@@ -146,13 +150,6 @@ export function PromptInputBasic({
           </PromptInputFooter>
         </PromptInput>
       </PromptInputProvider>
-
-      <ModelSettingsDialog
-        open={open}
-        onOpenChange={setOpen}
-        settings={settings}
-        setSettings={setSettings}
-      />
     </>
   );
 }
