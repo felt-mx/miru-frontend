@@ -68,25 +68,36 @@ export function Chat() {
               title="Hi, I'm Miru"
             />
           ) : (
-            messages.map((message, index) => (
-              <div key={message.id} className="flex items-start gap-5">
-                {message.role === "assistant" && <AIAvatar />}
-                {message.reasoning && (
-                  <Reasoning
-                    className="w-full"
-                    isStreaming={isLoading && index === messages.length - 1}
-                  >
-                    <ReasoningTrigger />
-                    <ReasoningContent>{message.reasoning}</ReasoningContent>
-                  </Reasoning>
-                )}
-                <Message from={message.role}>
-                  <MessageContent>
-                    <MessageResponse>{message.content}</MessageResponse>
-                  </MessageContent>
-                </Message>
-              </div>
-            ))
+            messages.map((message, index) => {
+              const isAssistant = message.role === "assistant";
+
+              return (
+                <div
+                  key={message.id}
+                  className={isAssistant ? "flex items-start gap-5" : ""}
+                >
+                  {isAssistant && <AIAvatar />}
+
+                  <div className={isAssistant ? "min-w-0 flex-1" : ""}>
+                    {message.reasoning && (
+                      <Reasoning
+                        className="w-full"
+                        isStreaming={isLoading && index === messages.length - 1}
+                      >
+                        <ReasoningTrigger />
+                        <ReasoningContent>{message.reasoning}</ReasoningContent>
+                      </Reasoning>
+                    )}
+
+                    <Message from={message.role}>
+                      <MessageContent>
+                        <MessageResponse>{message.content}</MessageResponse>
+                      </MessageContent>
+                    </Message>
+                  </div>
+                </div>
+              );
+            })
           )}
         </ConversationContent>
         <ConversationScrollButton />
