@@ -21,6 +21,7 @@ import {
   ReasoningContent,
   ReasoningTrigger,
 } from "@/components/ai-elements/reasoning";
+import { Shimmer } from "@/components/ai-elements/shimmer";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
@@ -43,6 +44,22 @@ export function Chat() {
       setMessages,
       messagesEndRef,
     });
+
+  const lastUserMessageIndex = messages
+    .map((message) => message.role)
+    .lastIndexOf("user");
+  const hasModelTokenAfterLastUser =
+    lastUserMessageIndex !== -1 &&
+    messages
+      .slice(lastUserMessageIndex + 1)
+      .some(
+        (message) =>
+          message.role === "assistant" &&
+          (message.content.trim().length > 0 ||
+            (message.reasoning?.trim().length ?? 0) > 0),
+      );
+  const showFirstTokenShimmer =
+    isLoading && lastUserMessageIndex !== -1 && !hasModelTokenAfterLastUser;
 
   return (
     <div className="flex size-full min-h-0 flex-col">
@@ -68,33 +85,48 @@ export function Chat() {
               title="Hi, I'm Miru"
             />
           ) : (
-            messages.map((message, index) => {
-              const isAssistant = message.role === "assistant";
-              return (
-                <div
-                  key={message.id}
-                  className={isAssistant ? "flex items-start gap-3" : ""}
-                >
-                  {isAssistant && <AIAvatar />}
-                  <div className={isAssistant ? "min-w-0 flex-1" : ""}>
-                    {message.reasoning && (
-                      <Reasoning
-                        className="w-full"
-                        isStreaming={isLoading && index === messages.length - 1}
-                      >
-                        <ReasoningTrigger />
-                        <ReasoningContent>{message.reasoning}</ReasoningContent>
-                      </Reasoning>
-                    )}
-                    <Message from={message.role}>
-                      <MessageContent>
-                        <MessageResponse>{message.content}</MessageResponse>
-                      </MessageContent>
-                    </Message>
+            <>
+              {messages.map((message, index) => {
+                const isAssistant = message.role === "assistant";
+                return (
+                  <div
+                    key={message.id}
+                    className={isAssistant ? "flex items-start gap-3" : ""}
+                  >
+                    {isAssistant && <AIAvatar />}
+                    <div className={isAssistant ? "min-w-0 flex-1" : ""}>
+                      {message.reasoning && (
+                        <Reasoning
+                          className="w-full"
+                          isStreaming={
+                            isLoading && index === messages.length - 1
+                          }
+                        >
+                          <ReasoningTrigger />
+                          <ReasoningContent>
+                            {message.reasoning}
+                          </ReasoningContent>
+                        </Reasoning>
+                      )}
+                      <Message from={message.role}>
+                        <MessageContent>
+                          <MessageResponse>{message.content}</MessageResponse>
+                        </MessageContent>
+                      </Message>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {showFirstTokenShimmer && (
+                <div className="flex items-start gap-3">
+                  <AIAvatar />
+                  <div className="min-w-0 flex-1 text-sm">
+                    <Shimmer>Working</Shimmer>
                   </div>
                 </div>
-              );
-            })
+              )}
+            </>
           )}
         </ConversationContent>
         <ConversationScrollButton />
