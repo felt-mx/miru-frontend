@@ -122,10 +122,9 @@ export function useChatWebSocket({
     input: string,
     settings?: ModelSettings,
     files?: File[],
+    attachments?: MessageType["attachments"],
   ) => {
     if (!input.trim() || !socketRef.current) return;
-
-    const attachments = files?.map((f) => ({ name: f.name, type: f.type }));
 
     setMessages((prev) => [
       ...prev,
@@ -179,6 +178,7 @@ export function useChatWebSocket({
         text: input,
         thinking: isThinking,
         settings: settings,
+        files: encodedFiles,
       });
     } catch (error) {
       console.error("[WebSocket] Failed to process files:", error);

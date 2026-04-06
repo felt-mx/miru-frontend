@@ -15,6 +15,14 @@ import {
   MessageContent,
   MessageResponse,
 } from "@/components/ai-elements/message";
+import {
+  Attachment,
+  AttachmentHoverCard,
+  AttachmentHoverCardContent,
+  AttachmentHoverCardTrigger,
+  AttachmentPreview,
+  Attachments,
+} from "@/components/ai-elements/attachments";
 import { PromptInputBasic } from "@/components/app/prompt-input-basic";
 import {
   Reasoning,
@@ -108,6 +116,43 @@ export function Chat() {
                           </ReasoningContent>
                         </Reasoning>
                       )}
+                      {message.role === "user" &&
+                      message.attachments?.length ? (
+                        <Attachments className="mb-2" variant="grid">
+                          {message.attachments.map((attachment) => (
+                            <AttachmentHoverCard key={attachment.id}>
+                              <AttachmentHoverCardTrigger asChild>
+                                <div className="inline-block">
+                                  <Attachment data={attachment}>
+                                    <AttachmentPreview />
+                                  </Attachment>
+                                </div>
+                              </AttachmentHoverCardTrigger>
+                              <AttachmentHoverCardContent
+                                align="end"
+                                collisionPadding={16}
+                              >
+                                <div className="flex max-h-[70vh] w-[min(90vw,42rem)] items-center justify-center overflow-hidden rounded-lg bg-muted/40 p-1">
+                                  {attachment.mediaType.startsWith("image/") ? (
+                                    <img
+                                      alt={attachment.filename}
+                                      className="max-h-[68vh] h-auto w-auto max-w-full object-contain"
+                                      src={attachment.url}
+                                    />
+                                  ) : (
+                                    <Attachment
+                                      className="size-56 overflow-hidden rounded-lg"
+                                      data={attachment}
+                                    >
+                                      <AttachmentPreview className="size-full" />
+                                    </Attachment>
+                                  )}
+                                </div>
+                              </AttachmentHoverCardContent>
+                            </AttachmentHoverCard>
+                          ))}
+                        </Attachments>
+                      ) : null}
                       <Message from={message.role}>
                         <MessageContent>
                           <MessageResponse>{message.content}</MessageResponse>

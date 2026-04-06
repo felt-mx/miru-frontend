@@ -32,6 +32,7 @@ import {
   Attachments,
 } from "../ai-elements/attachments";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import type { MessageAttachment } from "@/lib/chat-types";
 
 interface AttachmentItemProps {
   attachment: AttachmentData;
@@ -87,6 +88,8 @@ export function PromptInputBasic({
   handleSubmit: (
     value: string,
     settings: ModelSettings,
+    files?: File[],
+    attachments?: MessageAttachment[],
   ) => void | Promise<void>;
   isLoading: boolean;
   thinking: boolean;
@@ -94,16 +97,46 @@ export function PromptInputBasic({
 }) {
   const { settings, setSettings } = useModelSettings(thinking);
 
-  const onSubmit = ({ text }: PromptInputMessage) => {
+  const onSubmit = async ({ text, files }: PromptInputMessage) => {
     const trimmed = text.trim();
     if (!trimmed) return;
-    return handleSubmit(trimmed, settings);
+
+    const messageAttachments: MessageAttachment[] = files.map(
+      (file, index) => ({
+        id: `${Date.now()}-${index}`,
+        type: "file",
+        url: file.url,
+        filename: file.filename,
+        mediaType: file.mediaType,
+      }),
+    );
+
+    const uploadedFiles = await Promise.all(
+      files.map(async (file) => {
+        try {
+          const response = await fetch(file.url);
+          const blob = await response.blob();
+          return new File([blob], file.filename ?? "upload-image", {
+            type: file.mediaType || blob.type,
+          });
+        } catch {
+          return null;
+        }
+      }),
+    );
+
+    return handleSubmit(
+      trimmed,
+      settings,
+      uploadedFiles.filter((file): file is File => file !== null),
+      messageAttachments,
+    );
   };
 
   return (
     <>
       <PromptInputProvider>
-        <PromptInput onSubmit={onSubmit}>
+        <PromptInput accept="image/*" onSubmit={onSubmit}>
           <PromptInputAttachmentsDisplay />
           <PromptInputBody>
             <PromptInputTextarea
