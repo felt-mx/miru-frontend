@@ -59,7 +59,7 @@ export function Chat() {
       </div>
 
       <Conversation className="relative min-h-0 grow">
-        <ConversationContent>
+        <ConversationContent scrollClassName="overflow-y-auto overflow-x-hidden pr-1 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-track-transparent scrollbar-thumb-border hover:scrollbar-thumb-border/80">
           {messages.length === 0 ? (
             /* ── Landing / empty state ── */
             <ConversationEmptyState
@@ -70,14 +70,12 @@ export function Chat() {
           ) : (
             messages.map((message, index) => {
               const isAssistant = message.role === "assistant";
-
               return (
                 <div
                   key={message.id}
-                  className={isAssistant ? "flex items-start gap-5" : ""}
+                  className={isAssistant ? "flex items-start gap-3" : ""}
                 >
                   {isAssistant && <AIAvatar />}
-
                   <div className={isAssistant ? "min-w-0 flex-1" : ""}>
                     {message.reasoning && (
                       <Reasoning
@@ -88,7 +86,6 @@ export function Chat() {
                         <ReasoningContent>{message.reasoning}</ReasoningContent>
                       </Reasoning>
                     )}
-
                     <Message from={message.role}>
                       <MessageContent>
                         <MessageResponse>{message.content}</MessageResponse>

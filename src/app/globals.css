@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "tailwind-scrollbar";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @source "../node_modules/streamdown/dist/*.js";
@@ -135,6 +136,15 @@
 [data-streamdown="code-block-actions"],
 [data-streamdown="mermaid-block-actions"] {
   pointer-events: auto;
+}
+
+/* Match chat scrollbar styling for code snippets rendered inside MessageResponse. */
+[data-streamdown="code-block-body"] {
+  @apply scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border;
+}
+
+[data-streamdown="code-block-body"]:hover {
+  @apply scrollbar-thumb-border/80;
 }
 
 @layer base {
