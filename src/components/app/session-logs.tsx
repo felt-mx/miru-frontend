@@ -18,11 +18,10 @@ export function SessionLogs() {
     <div className="relative flex size-full min-h-0 flex-col overflow-hidden rounded-[26px] bg-transparent text-white">
       <div className="sticky top-0 z-10 flex items-center justify-between gap-2 bg-transparent px-4 py-3">
         <div className="flex items-center gap-3">
-          <div className="flex flex-col leading-tight">
+          <div className="flex">
             <span className="text-base font-semibold tracking-tight text-white/95">
               Session Log
             </span>
-            <span className="text-xs text-white/60">Live session</span>
           </div>
         </div>
         <span className="px-2.5 py-1 text-xs text-white/70">

@@ -77,27 +77,32 @@ export function Chat() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg">
             <Bot className="size-5 text-white/80" />
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-base font-semibold text-white/95">Miru</span>
+          <div className="flex flex-col items-start leading-tight">
+            <div className="flex items-center gap-3">
+              <span className="text-base font-semibold text-white/95">
+                Miru
+              </span>
+              <span
+                aria-label={isConnected ? "Online" : "Offline"}
+                className="inline-flex items-center"
+              >
+                <span className="relative flex size-2.5">
+                  <span
+                    className={`absolute inline-flex h-full w-full rounded-full animate-ping [animation-duration:1800ms] ${
+                      isConnected ? "bg-emerald-400/45" : "bg-red-400/45"
+                    }`}
+                  />
+                  <span
+                    className={`relative inline-flex size-2.5 rounded-full ${
+                      isConnected ? "bg-emerald-400" : "bg-red-400"
+                    }`}
+                  />
+                </span>
+              </span>
+            </div>
+            <span className="text-[11px] text-white/60">Your AI companion</span>
           </div>
         </div>
-        <span
-          aria-label={isConnected ? "Online" : "Offline"}
-          className="inline-flex items-center px-2.5 py-1"
-        >
-          <span className="relative flex size-2.5">
-            <span
-              className={`absolute inline-flex h-full w-full rounded-full animate-ping [animation-duration:1800ms] ${
-                isConnected ? "bg-emerald-400/45" : "bg-red-400/45"
-              }`}
-            />
-            <span
-              className={`relative inline-flex size-2.5 rounded-full ${
-                isConnected ? "bg-emerald-400" : "bg-red-400"
-              }`}
-            />
-          </span>
-        </span>
       </div>
 
       <Conversation className="relative min-h-0 grow">
