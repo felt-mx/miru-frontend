@@ -3,8 +3,8 @@
 import { MessageType } from "@/lib/chat-types";
 import { compressImage } from "@/lib/image-utils";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
 import { ModelSettings } from "@/components/app/model-settings-dialog";
+import { useSharedSocket } from "@/hooks/use-shared-socket";
 
 type Options = {
   url: string;
@@ -12,26 +12,24 @@ type Options = {
   messagesEndRef: React.RefObject<HTMLDivElement | null>;
 };
 
-export function useChatWebSocket({
-  url,
-  setMessages,
-  messagesEndRef,
-}: Options) {
+export function useChat({ url, setMessages, messagesEndRef }: Options) {
+  const { socket, isConnected } = useSharedSocket(url);
   const [isLoading, setIsLoading] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
-  const socketRef = useRef<Socket | null>(null);
+  const socketRef = useRef<typeof socket>(null);
 
   useEffect(() => {
-    const socket = io(url, {
-      transports: ["websocket"],
-    });
     socketRef.current = socket;
+  }, [socket]);
 
-    socket.on("connect", () => {
+  useEffect(() => {
+    if (!socket) return;
+
+    const onConnect = () => {
       console.log("WebSocket connected");
-    });
+    };
 
-    socket.on("assistant_token", (data) => {
+    const onAssistantToken = (data: string) => {
       const content = data || "";
 
       setMessages((prev) => {
@@ -55,9 +53,9 @@ export function useChatWebSocket({
       });
 
       setIsLoading(true);
-    });
+    };
 
-    socket.on("assistant_thinking", (data) => {
+    const onAssistantThinking = (data: string) => {
       const content = data || "";
 
       setMessages((prev) => {
@@ -82,41 +80,55 @@ export function useChatWebSocket({
       });
 
       setIsLoading(true);
-    });
+    };
 
-    socket.on("assistant_done", (data) => {
+    const onAssistantDone = (data: { data?: { all_results?: unknown } }) => {
       setIsLoading(false);
 
       if (data?.data?.all_results) {
         setMessages((prev) =>
           prev.map((msg, idx) =>
             idx === prev.length - 1 && msg.role === "assistant"
-              ? { ...msg, sources: data.data.all_results }
+              ? { ...msg, sources: data.data?.all_results }
               : msg,
           ),
         );
       }
-    });
+    };
 
-    socket.on("connect_error", (error) => {
+    const onConnectError = (error: unknown) => {
       console.error("WebSocket connection error:", error);
       setIsLoading(false);
-    });
+    };
 
-    socket.on("disconnect", () => {
+    const onDisconnect = () => {
       console.log("WebSocket disconnected");
       setIsLoading(false);
-    });
+    };
 
-    socket.on("error", (error) => {
+    const onError = (error: unknown) => {
       console.error("WebSocket error:", error);
       setIsLoading(false);
-    });
+    };
+
+    socket.on("connect", onConnect);
+    socket.on("assistant_token", onAssistantToken);
+    socket.on("assistant_thinking", onAssistantThinking);
+    socket.on("assistant_done", onAssistantDone);
+    socket.on("connect_error", onConnectError);
+    socket.on("disconnect", onDisconnect);
+    socket.on("error", onError);
 
     return () => {
-      socket.disconnect();
+      socket.off("connect", onConnect);
+      socket.off("assistant_token", onAssistantToken);
+      socket.off("assistant_thinking", onAssistantThinking);
+      socket.off("assistant_done", onAssistantDone);
+      socket.off("connect_error", onConnectError);
+      socket.off("disconnect", onDisconnect);
+      socket.off("error", onError);
     };
-  }, [url]);
+  }, [socket, setMessages]);
 
   const sendMessage = async (
     input: string,
@@ -186,5 +198,5 @@ export function useChatWebSocket({
     }
   };
 
-  return { isLoading, sendMessage, isThinking, setIsThinking };
+  return { isLoading, sendMessage, isThinking, setIsThinking, isConnected };
 }

@@ -140,11 +140,30 @@
 
 /* Match chat scrollbar styling for code snippets rendered inside MessageResponse. */
 [data-streamdown="code-block-body"] {
-  @apply scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border;
+  scrollbar-width: thin;
+  scrollbar-color: hsl(0 0% 100% / 0.2) transparent;
 }
 
 [data-streamdown="code-block-body"]:hover {
-  @apply scrollbar-thumb-border/80;
+  scrollbar-color: hsl(0 0% 100% / 0.35) transparent;
+}
+
+[data-streamdown="code-block-body"]::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-streamdown="code-block-body"]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-streamdown="code-block-body"]::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: hsl(0 0% 100% / 0.2);
+}
+
+[data-streamdown="code-block-body"]:hover::-webkit-scrollbar-thumb {
+  background: hsl(0 0% 100% / 0.35);
 }
 
 @layer base {
