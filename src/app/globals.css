@@ -139,9 +139,25 @@
 }
 
 /* Match chat scrollbar styling for code snippets rendered inside MessageResponse. */
+[data-streamdown="code-block"] {
+  border-color: hsl(0 0% 100% / 0.14);
+  background: hsl(0 0% 100% / 0.04);
+  backdrop-filter: blur(8px) saturate(120%);
+}
+
+[data-streamdown="code-block-header"] {
+  color: hsl(0 0% 100% / 0.72);
+}
+
 [data-streamdown="code-block-body"] {
+  border-color: hsl(0 0% 100% / 0.14);
+  background: hsl(230 25% 14% / 0.55);
   scrollbar-width: thin;
   scrollbar-color: hsl(0 0% 100% / 0.2) transparent;
+}
+
+[data-streamdown="code-block-body"] pre {
+  background: transparent !important;
 }
 
 [data-streamdown="code-block-body"]:hover {
@@ -181,4 +197,84 @@
   [data-disabled] {
     cursor: default;
   }
+}
+
+@keyframes ambient-orb-a {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.92;
+  }
+  50% {
+    transform: translate3d(1.8%, -1.6%, 0) scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(-1.2%, 1.4%, 0) scale(0.98);
+    opacity: 0.88;
+  }
+}
+
+@keyframes ambient-orb-b {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1.02);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate3d(-2%, 1.4%, 0) scale(0.97);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(1.6%, -1.2%, 0) scale(1.03);
+    opacity: 0.86;
+  }
+}
+
+@keyframes ambient-orb-c {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.84;
+  }
+  50% {
+    transform: translate3d(0, -2.2%, 0) scale(1.06);
+    opacity: 0.96;
+  }
+  100% {
+    transform: translate3d(0, 1.6%, 0) scale(0.98);
+    opacity: 0.82;
+  }
+}
+
+@keyframes ambient-sheen {
+  0% {
+    transform: translate3d(-2%, -1%, 0) rotate(24deg);
+    opacity: 0.42;
+  }
+  50% {
+    transform: translate3d(1.2%, 1.4%, 0) rotate(25deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate3d(-1.4%, -0.6%, 0) rotate(23deg);
+    opacity: 0.4;
+  }
+}
+
+.ambient-orb-a {
+  animation: ambient-orb-a 18s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+.ambient-orb-b {
+  animation: ambient-orb-b 22s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+.ambient-orb-c {
+  animation: ambient-orb-c 26s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+.ambient-sheen {
+  animation: ambient-sheen 24s ease-in-out infinite alternate;
+  will-change: transform, opacity;
 }

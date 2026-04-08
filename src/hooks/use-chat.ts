@@ -16,6 +16,7 @@ export function useChat({ url, setMessages, messagesEndRef }: Options) {
   const { socket, isConnected } = useSharedSocket(url);
   const [isLoading, setIsLoading] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
+  const [isReasoningStreaming, setIsReasoningStreaming] = useState(false);
   const socketRef = useRef<typeof socket>(null);
 
   useEffect(() => {
@@ -31,6 +32,8 @@ export function useChat({ url, setMessages, messagesEndRef }: Options) {
 
     const onAssistantToken = (data: string) => {
       const content = data || "";
+
+      setIsReasoningStreaming(false);
 
       setMessages((prev) => {
         const lastMessage = prev[prev.length - 1];
@@ -57,6 +60,8 @@ export function useChat({ url, setMessages, messagesEndRef }: Options) {
 
     const onAssistantThinking = (data: string) => {
       const content = data || "";
+
+      setIsReasoningStreaming(true);
 
       setMessages((prev) => {
         const lastMessage = prev[prev.length - 1];
@@ -198,5 +203,12 @@ export function useChat({ url, setMessages, messagesEndRef }: Options) {
     }
   };
 
-  return { isLoading, sendMessage, isThinking, setIsThinking, isConnected };
+  return {
+    isLoading,
+    sendMessage,
+    isThinking,
+    setIsThinking,
+    isConnected,
+    isReasoningStreaming,
+  };
 }

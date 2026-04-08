@@ -57,20 +57,22 @@ export function SessionLogs() {
           </div>
         ) : (
           <div className="space-y-3">
-            {logs.map((log) => (
+            {[...logs].reverse().map((log) => (
               <div
                 key={log.id}
-                className="rounded-2xl border border-white/15 bg-[linear-gradient(180deg,hsl(228_40%_12%/.72),hsl(228_30%_10%/.82))] p-4 shadow-[0_8px_28px_hsl(235_50%_6%/.45)]"
+                className="relative overflow-hidden rounded-2xl border border-white/30 bg-white/[0.12] p-4 shadow-[0_10px_30px_hsl(235_45%_8%/.2),inset_0_1px_0_hsl(0_0%_100%/.45)] backdrop-blur-2xl backdrop-saturate-125"
               >
-                <div className="mb-2 flex items-center justify-between gap-2">
-                  <h1 className="text-sm font-semibold uppercase tracking-wide text-white/70">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-10 bg-[linear-gradient(180deg,hsl(0_0%_100%/.28),transparent)]" />
+
+                <div className="relative mb-2 flex items-center justify-between gap-2">
+                  <h1 className="text-sm font-semibold uppercase tracking-wide text-white/78">
                     {log.type}
                   </h1>
-                  <span className="text-xs text-white/45">
+                  <span className="text-xs text-white/58">
                     {new Date(log.timestamp).toLocaleTimeString()}
                   </span>
                 </div>
-                <p className="whitespace-pre-wrap break-words text-white/85">
+                <p className="relative whitespace-pre-wrap break-words text-white/92">
                   {log.description}
                 </p>
               </div>

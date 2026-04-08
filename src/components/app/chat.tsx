@@ -30,6 +30,8 @@ import {
   ReasoningTrigger,
 } from "@/components/ai-elements/reasoning";
 import { Shimmer } from "@/components/ai-elements/shimmer";
+import { StreamType } from "@/lib/stream-types";
+import { Stream } from "@/components/app/stream";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
@@ -44,14 +46,21 @@ function AIAvatar() {
 
 export function Chat() {
   const [messages, setMessages] = useState<MessageType[]>([]);
+  const [streamType, setStreamType] = useState<StreamType>("none");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { isLoading, sendMessage, isThinking, setIsThinking, isConnected } =
-    useChat({
-      url: BACKEND_URL,
-      setMessages,
-      messagesEndRef,
-    });
+  const {
+    isLoading,
+    sendMessage,
+    isThinking,
+    setIsThinking,
+    isConnected,
+    isReasoningStreaming,
+  } = useChat({
+    url: BACKEND_URL,
+    setMessages,
+    messagesEndRef,
+  });
 
   const lastUserMessageIndex = messages
     .map((message) => message.role)
@@ -105,6 +114,23 @@ export function Chat() {
         </div>
       </div>
 
+      {/* ── Stream ── */}
+      {streamType !== "none" && (
+        <div
+          className="pointer-events-none absolute left-0 right-0 top-14 z-20 px-4 pb-2"
+          style={{
+            WebkitMaskImage:
+              "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
+            maskImage:
+              "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
+          }}
+        >
+          <div className="pointer-events-auto">
+            <Stream url={BACKEND_URL} streamType={streamType} />
+          </div>
+        </div>
+      )}
+
       <Conversation className="relative min-h-0 grow">
         <ConversationContent scrollClassName="overflow-y-auto overflow-x-hidden pr-1 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-track-transparent scrollbar-thumb-border hover:scrollbar-thumb-border/80">
           {messages.length === 0 ? (
@@ -129,7 +155,8 @@ export function Chat() {
                         <Reasoning
                           className="w-full"
                           isStreaming={
-                            isLoading && index === messages.length - 1
+                            isReasoningStreaming &&
+                            index === messages.length - 1
                           }
                         >
                           <ReasoningTrigger />
@@ -176,7 +203,13 @@ export function Chat() {
                         </Attachments>
                       ) : null}
                       <Message from={message.role}>
-                        <MessageContent>
+                        <MessageContent
+                          className={
+                            message.role === "user"
+                              ? "group-[.is-user]:relative group-[.is-user]:border group-[.is-user]:border-white/18 group-[.is-user]:bg-white/8 group-[.is-user]:text-white group-[.is-user]:shadow-[0_4px_14px_rgba(0,0,0,0.16)] group-[.is-user]:backdrop-blur-[6px] group-[.is-user]:[backdrop-filter:blur(8px)_saturate(120%)_contrast(103%)]"
+                              : undefined
+                          }
+                        >
                           <MessageResponse>{message.content}</MessageResponse>
                         </MessageContent>
                       </Message>
@@ -206,6 +239,7 @@ export function Chat() {
           isLoading={isLoading}
           thinking={isThinking}
           setThinking={setIsThinking}
+          setStreamType={setStreamType}
         />
       </div>
     </div>

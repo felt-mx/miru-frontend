@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
 import {
   PromptInputActionMenuContent,
   PromptInputTextarea,
@@ -17,8 +17,22 @@ import {
   usePromptInputAttachments,
 } from "@/components/ai-elements/prompt-input";
 import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Brain, GlobeIcon, Wrench } from "lucide-react";
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Brain,
+  Camera,
+  GlobeIcon,
+  Monitor,
+  SquareStop,
+  Video,
+  Wrench,
+} from "lucide-react";
 import {
   ModelSettingsDialog,
   ModelSettings,
@@ -33,6 +47,7 @@ import {
 } from "../ai-elements/attachments";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import type { MessageAttachment } from "@/lib/chat-types";
+import { StreamType } from "@/lib/stream-types";
 
 interface AttachmentItemProps {
   attachment: AttachmentData;
@@ -84,6 +99,7 @@ export function PromptInputBasic({
   isLoading,
   thinking,
   setThinking,
+  setStreamType,
 }: {
   handleSubmit: (
     value: string,
@@ -94,6 +110,7 @@ export function PromptInputBasic({
   isLoading: boolean;
   thinking: boolean;
   setThinking: (thinking: boolean) => void;
+  setStreamType: (streamType: StreamType) => void;
 }) {
   const { settings, setSettings } = useModelSettings(thinking);
 
@@ -150,6 +167,27 @@ export function PromptInputBasic({
               <PromptInputActionMenu>
                 <PromptInputActionMenuTrigger disabled={isLoading} />
                 <PromptInputActionMenuContent>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      <Camera className="mr-2 size-4" /> Stream
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuItem
+                        onSelect={() => setStreamType("screen")}
+                      >
+                        <Monitor className="mr-2 size-4" /> Screen share
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onSelect={() => setStreamType("camera")}
+                      >
+                        <Video className="mr-2 size-4" /> Camera
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onSelect={() => setStreamType("none")}>
+                        <SquareStop className="mr-2 size-4" /> Stop Capture
+                      </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
                   <PromptInputActionAddAttachments />
                   <Dialog>
                     <DialogTrigger asChild>
