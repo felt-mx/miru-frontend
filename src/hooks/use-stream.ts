@@ -5,8 +5,8 @@ import { useSharedSocket } from "@/hooks/use-shared-socket";
 import { StreamType } from "@/lib/stream-types";
 
 const FRAME_INTERVAL_MS = 3000;
-const MAX_FRAME_WIDTH = 1280;
-const JPEG_QUALITY = 0.8;
+const MAX_FRAME_WIDTH = 3840;
+const JPEG_QUALITY = 0.9;
 const TARGET_PREVIEW_FPS = 60;
 
 export type Options = {
@@ -79,8 +79,8 @@ export function useStream({ url, streamType, previewRef }: Options) {
 
       const frame = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
 
-      socket.emit("send_frame", {
-        frame,
+      socket.emit("frame", {
+        frame: frame,
       });
     };
 
