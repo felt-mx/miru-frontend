@@ -157,7 +157,7 @@ export function PromptInputBasic({
           <PromptInputAttachmentsDisplay />
           <PromptInputBody>
             <PromptInputTextarea
-              className="p-4"
+              className="p-4 overflow-y-auto overflow-x-hidden pr-1 scrollbar-thin scrollbar-thumb-rounded-full scrollbar-track-transparent scrollbar-thumb-border hover:scrollbar-thumb-border/80"
               disabled={isLoading}
               placeholder="Ask Miru..."
             />
